@@ -21,6 +21,7 @@ def profile(user_id):
     review_times = [0 for i in range(13)]
     positive_comments = list()
     negative_comments = list()
+    datatable = list()
 
     # Construct ret_dict
     if feedback_cursor.count() != 0:
@@ -44,6 +45,9 @@ def profile(user_id):
             if 'negative_comments' in item and item['negative_comments'] != "":
                 negative_comments.append([item['negative_comments'], "#%s in %s" % (item['pr_num'], item['full_repo_name']), item['pr_url']])
 
+            datatable.append([item['full_repo_name'], "<a href=%s>#%s</a> " % (item['pr_url'], item['pr_num']), item.get('rating_before_discussion', '-'),
+                              item.get('rating', '-'), item.get('necessity', '-'), item.get('review_time', '-')])
+
         ret_dict["avg_rating"] = (rev_ratings[0] + rev_ratings[1] * 2 + rev_ratings[2] * 3 + rev_ratings[3] * 4 + rev_ratings[4] * 5)/sum(rev_ratings)
         ret_dict["avg_rating_before_discussion"] = (rev_ratings_bd[0] + rev_ratings_bd[1] * 2 + rev_ratings_bd[2] * 3 + rev_ratings_bd[3] * 4 + rev_ratings_bd[4] * 5)/sum(rev_ratings_bd)
         ret_dict["avg_necessity"] = (necessity_ratings[0] + necessity_ratings[1] * 2 + necessity_ratings[2] * 3 + necessity_ratings[3] * 4 + necessity_ratings[4] * 5)/sum(necessity_ratings)
@@ -61,5 +65,10 @@ def profile(user_id):
     ret_dict["review_times"] = review_times
     ret_dict["positive_comments"] = positive_comments
     ret_dict["negative_comments"] = negative_comments
+    ret_dict["datatable"] = datatable
 
     return ret_dict
+
+
+def profile_ranged(user_id):
+    return "Boom"

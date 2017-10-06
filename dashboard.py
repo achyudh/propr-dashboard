@@ -8,6 +8,8 @@ app = Flask(__name__)
 def profile():
     if request.json["action"] == 'fetch':
         return jsonify(fetch.profile(request.json["user_id"]))
+    elif request.json["action"] == 'fetch_ranged':
+        return jsonify(fetch.profile_ranged(request.json["user_id"]))
     else:
         return 'Request not handled', 501
 
