@@ -1,6 +1,7 @@
 import pymongo
 import time
 
+
 def __profile_dict(feedback_cursor):
     ret_dict = dict()
     avg_review_time = 0
@@ -65,7 +66,7 @@ def __profile_dict(feedback_cursor):
     return ret_dict
 
 
-def modal(user_id):
+def modal(user_id, action, label):
     # Fetch cursor of relevant entries
     info_coll = pymongo.MongoClient().pr_database.pr_info
     info_cursor = info_coll.find({"user.login": user_id})
@@ -75,11 +76,18 @@ def modal(user_id):
     feedback_coll = pymongo.MongoClient().pr_database.pr_feedback
     feedback_cursor = feedback_coll.find({"pr_url": {"$in": user_pr_urls}})
     datatable = list()
-    if feedback_cursor.count() != 0:
+    if '-' in label:
+        start = int(label.split('-')[0])
+        end = int(label.split('-')[1])
         for item in feedback_cursor:
-            datatable.append([item['full_repo_name'], "<a href=%s>#%s</a> " % (item['pr_url'], item['pr_num']),
-                              item.get('rating_before_discussion', '-'),
-                              item.get('rating', '-'), item.get('necessity', '-'), item.get('review_time', '-')])
+            if start <= int(item.get(action)) <= end:
+                datatable.append([item['full_repo_name'], "<a href=%s>#%s</a> " % (item['pr_url'], item['pr_num']),
+                                  item.get('rating_before_discussion', '-'), item.get('rating', '-'), item.get('necessity', '-'), item.get('review_time', '-')])
+    else:
+        for item in feedback_cursor:
+            if int(item.get(action, -1)) == int(label):
+                datatable.append([item['full_repo_name'], "<a href=%s>#%s</a> " % (item['pr_url'], item['pr_num']),
+                              item.get('rating_before_discussion', '-'), item.get('rating', '-'), item.get('necessity', '-'), item.get('review_time', '-')])
     return datatable
 
 
@@ -107,3 +115,7 @@ def profile_ranged(user_id, start_date, end_date):
     feedback_coll = pymongo.MongoClient().pr_database.pr_feedback
     feedback_cursor = feedback_coll.find({"pr_url": {"$in": user_pr_urls}})
     return __profile_dict(feedback_cursor)
+
+
+def trends():
+    return

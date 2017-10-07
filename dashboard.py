@@ -1,6 +1,5 @@
-from flask import Flask, request, redirect, jsonify
+from flask import Flask, request, jsonify
 from db import fetch
-import requests, json, urllib, pymongo, sys, time, hashlib
 
 app = Flask(__name__)
 
@@ -12,14 +11,14 @@ def profile():
     elif request.json["action"] == 'fetch_ranged':
         return jsonify(fetch.profile_ranged(request.json["user_id"], request.json["start_date"], request.json["end_date"]))
     elif request.json["action"] == 'trends':
-        return
+        return jsonify(fetch.trends())
     else:
         return 'Request not handled', 501
 
 
 @app.route('/modal', methods=['POST'])
 def modal():
-    return jsonify(fetch.modal(request.json["user_id"]))
+    return jsonify(fetch.modal(request.json["user_id"], request.json["action"], request.json["label"]))
 
 
 @app.after_request
