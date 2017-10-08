@@ -117,5 +117,5 @@ def profile_ranged(user_id, start_date, end_date):
     return __profile_dict(feedback_cursor)
 
 
-def trends():
+def trends(user_id):
     return
